@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Interview Prep Assistant
 
-## Getting Started
+A full-stack chatbot that helps software engineering candidates practice for technical interviews. Built with Next.js and Google Gemini, it uses a retrieval-augmented generation (RAG) pipeline over a Pinecone vector database to ground its answers, and routes harder coding questions to a larger model.
 
-First, run the development server:
+**Live demo:** https://customer-support-ai-project.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![AI Interview Prep Assistant](screenshot.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
+- Conversational chat UI with answers that stream in token by token
+- RAG pipeline: a knowledge base is chunked, embedded, and stored in Pinecone, and the closest matches are pulled into each prompt so answers stay grounded
+- A routing step classifies each question and sends coding questions to a larger Gemini model, keeping general chat on a cheaper one
+- Retry handling for model-overload (503) responses
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Tech stack
+- Next.js (App Router) and React
+- Google Gemini API (`@google/generative-ai`)
+- LangChain and Pinecone for embeddings and vector search
+- MUI for the interface
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Running locally
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a `.env.local` file with your keys:
+   ```
+   GOOGLE_STUDIO_API_KEY=your_gemini_key
+   PINECONE_API_KEY=your_pinecone_key
+   PINECONE_INDEX=your_index_name
+   NEXT_PUBLIC_API_URL=http://localhost:3000
+   ```
+3. Load the knowledge base into Pinecone by sending a POST request to `/api/scrape` once.
+4. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+5. Open http://localhost:3000 in your browser.
