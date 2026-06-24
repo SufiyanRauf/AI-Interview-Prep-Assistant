@@ -44,7 +44,7 @@ export async function POST(req) {
       systemInstruction: newSystemPrompt,
     });
     
-    const chatHistory = messages.slice(0, -1).filter(msg => msg.role === 'user' || (msg.role === 'assistant' && msg.content !== "Hi there! I'm your AI Interview Prep Assistant. How can I help you today?"));
+    const chatHistory = messages.slice(0, -1).filter(msg => msg.role === 'user' || (msg.role === 'assistant' && msg.content !== "Hi there! I'm your AI Interview Prep Coach. How can I help you today?"));
 
     const chat = geminiModel.startChat({
       history: chatHistory.map(msg => ({
