@@ -15,7 +15,7 @@ export async function POST(req) {
   User query: "${lastMessage.content}"`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     let response;
     let attempts = 0;
     const maxAttempts = 3;
@@ -38,9 +38,9 @@ export async function POST(req) {
     }
 
     const route = response.text().toLowerCase();
-    let modelName = 'gemini-1.5-flash';
+    let modelName = 'gemini-2.5-flash';
     if (route.includes('code')) {
-      modelName = 'gemini-1.5-pro'; // Use a more powerful model for code
+      modelName = 'gemini-2.5-pro'; // Use a more powerful model for code
     }
 
     const chatResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {

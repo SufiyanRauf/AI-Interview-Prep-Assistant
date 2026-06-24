@@ -23,7 +23,7 @@ const systemPrompt = `You are an AI-powered assistant for a platform that provid
 Your goal is to provide accurate information, assist with common inquiries, and ensure a positive experience for all users.`;
 
 export async function POST(req) {
-  const { messages, model = 'gemini-1.5-flash' } = await req.json();
+  const { messages, model = 'gemini-2.5-flash' } = await req.json();
   const lastMessage = messages[messages.length - 1];
 
   try {
