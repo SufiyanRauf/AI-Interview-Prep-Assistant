@@ -38,9 +38,11 @@ export async function POST(req) {
     }
 
     const route = response.text().toLowerCase();
+    // Both paths use flash. gemini-2.5-pro needs a paid plan, so the
+    // free tier returns 429 for it. Flash handles code answers well.
     let modelName = 'gemini-2.5-flash';
     if (route.includes('code')) {
-      modelName = 'gemini-2.5-pro'; // Use a more powerful model for code
+      modelName = 'gemini-2.5-flash';
     }
 
     const chatResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {

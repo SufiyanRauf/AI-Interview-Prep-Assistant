@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { embedText } from '@/lib/embedding';
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_STUDIO_API_KEY);
 const pinecone = new Pinecone({
@@ -27,13 +27,8 @@ export async function POST(req) {
   const lastMessage = messages[messages.length - 1];
 
   try {
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-      apiKey: process.env.GOOGLE_STUDIO_API_KEY,
-      modelName: "embedding-001",
-    });
-
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX);
-    const vector = await embeddings.embedQuery(lastMessage.content);
+    const vector = await embedText(lastMessage.content);
 
     const results = await pineconeIndex.query({
       vector,

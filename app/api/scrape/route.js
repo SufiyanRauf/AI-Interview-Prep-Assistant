@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Pinecone } from '@pinecone-database/pinecone';
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { embedText } from '@/lib/embedding';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -21,15 +21,10 @@ export async function POST() {
 
     const chunks = await splitter.splitText(text);
 
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-      apiKey: process.env.GOOGLE_STUDIO_API_KEY,
-      modelName: "embedding-001",
-    });
-
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX);
 
     for (const chunk of chunks) {
-      const vector = await embeddings.embedQuery(chunk);
+      const vector = await embedText(chunk);
       await pineconeIndex.upsert([{
         id: Math.random().toString(36).substring(7),
         values: vector,
