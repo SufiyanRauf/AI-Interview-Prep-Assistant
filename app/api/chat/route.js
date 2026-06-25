@@ -54,20 +54,22 @@ export async function POST(req) {
     
     let result;
     let attempts = 0;
-    const maxAttempts = 3;
+    const maxAttempts = 4;
 
-    // Retry logic for API call
+    // Retry transient model errors (overloaded / rate limited) with backoff
     while (attempts < maxAttempts) {
       try {
         result = await chat.sendMessageStream(lastMessage.content);
         break; // Success, exit the loop
       } catch (error) {
-        if (error.status === 503 && attempts < maxAttempts - 1) {
-          console.log(`Model overloaded, retrying in ${attempts + 1} second(s)...`);
+        const status = error?.status;
+        const transient = status === 503 || status === 429 || status === 500 || status === undefined;
+        if (transient && attempts < maxAttempts - 1) {
+          console.log(`Transient model error (${status}), retrying in ${attempts + 1}s...`);
           await delay((attempts + 1) * 1000);
           attempts++;
         } else {
-          throw error; // Re-throw other errors or on final attempt
+          throw error; // Non-transient error or out of attempts
         }
       }
     }

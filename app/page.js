@@ -215,42 +215,58 @@ function Home() {
     setMessages(newMessages);
     setMessage('');
 
-    try {
-      const response = await fetch('/api/router', {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
-      });
-
-      if (!response.body) {
-        throw new Error("Response body is null");
-      }
-
-      setMessages(prev => [...prev, {role: 'assistant', content: ''}]);
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-
-      while (!done) {
-        const { value, done: readerDone } = await reader.read();
-        done = readerDone;
-        const chunk = decoder.decode(value, { stream: true });
-
-        setMessages(prevMessages => {
-          const lastMessage = prevMessages[prevMessages.length - 1];
-          const updatedLastMessage = {
-            ...lastMessage,
-            content: lastMessage.content + chunk,
-          };
-          return [...prevMessages.slice(0, -1), updatedLastMessage];
+    // Try the request, retrying once if it fails before any reply has streamed
+    // (covers transient model overloads on the free tier)
+    const maxTries = 2;
+    let started = false;
+    for (let attempt = 1; attempt <= maxTries; attempt++) {
+      try {
+        const response = await fetch('/api/router', {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: newMessages }),
         });
+
+        if (!response.ok || !response.body) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        started = true;
+        setMessages(prev => [...prev, {role: 'assistant', content: ''}]);
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          done = readerDone;
+          const chunk = decoder.decode(value, { stream: true });
+          if (chunk) {
+            setMessages(prevMessages => {
+              const lastMessage = prevMessages[prevMessages.length - 1];
+              const updatedLastMessage = {
+                ...lastMessage,
+                content: lastMessage.content + chunk,
+              };
+              return [...prevMessages.slice(0, -1), updatedLastMessage];
+            });
+          }
+        }
+        setIsTyping(false);
+        return;
+      } catch (error) {
+        console.error(`Failed to send message (attempt ${attempt}):`, error);
+        // Retry only if nothing has streamed yet and we have tries left
+        if (!started && attempt < maxTries) {
+          await new Promise(r => setTimeout(r, 1200));
+          continue;
+        }
+        const friendly = { role: 'assistant', content: 'Sorry, the model is busy right now. Please try again in a moment.' };
+        setMessages(prev => started ? [...prev.slice(0, -1), friendly] : [...prev, friendly]);
+        setIsTyping(false);
+        return;
       }
-    } catch (error) {
-      console.error("Failed to send message:", error);
-      setMessages(prev => [...prev.slice(0, -1), {role: 'assistant', content: 'Oops! Something went a bit sideways. Please try again.'}]);
-    } finally {
-      setIsTyping(false);
     }
   };
 
