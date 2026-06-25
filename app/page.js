@@ -6,6 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { keyframes } from '@emotion/react';
 
 // Colors used across the page
@@ -53,9 +54,12 @@ const Message = ({ msg }) => {
   const CodeBlock = ({ node, inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || '');
     const code = String(children).replace(/\n$/, '');
+    const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
       navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
     };
 
     return !inline && match ? (
@@ -71,18 +75,21 @@ const Message = ({ msg }) => {
         <Button
           size="small"
           onClick={handleCopy}
+          aria-label="Copy code"
+          startIcon={copied ? <CheckRoundedIcon fontSize="small" /> : <ContentCopyIcon fontSize="small" />}
           sx={{
             position: 'absolute',
             top: 8,
             right: 8,
             color: 'white',
+            textTransform: 'none',
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
             '&:hover': {
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
             },
           }}
         >
-          <ContentCopyIcon fontSize="small" />
+          {copied ? 'Copied' : 'Copy'}
         </Button>
       </Box>
     ) : (
@@ -324,10 +331,13 @@ function Home() {
         </Box>
 
         <Box sx={{ bgcolor: '#fff', borderTop: '1px solid #c2ccc6', py: 1.75, px: { xs: 1.5, sm: 2.5 } }}>
-          <Stack direction="row" spacing={1.5} alignItems="center">
+          <Stack direction="row" spacing={1.5} alignItems="flex-end">
             <TextField
               placeholder="Ask me anything..."
               fullWidth
+              multiline
+              maxRows={4}
+              autoFocus
               variant="outlined"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -352,7 +362,8 @@ function Home() {
             <Button
               variant="contained"
               onClick={() => sendMessage()}
-              disabled={isTyping}
+              disabled={isTyping || !message.trim()}
+              aria-label="Send message"
               sx={{
                 borderRadius: '50%',
                 width: 52,
