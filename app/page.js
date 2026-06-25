@@ -8,6 +8,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { keyframes } from '@emotion/react';
+import ReactMarkdown from 'react-markdown';
 
 // Colors used across the page
 const ACCENT = '#059669';
@@ -99,16 +100,20 @@ const Message = ({ msg }) => {
     );
   };
 
-  const renderContent = (content) => {
-    return content.split(/(```[\s\S]*?```)/g).map((part, index) => {
-      if (part.startsWith('```')) {
-        const language = part.match(/```(\w+)/)?.[1] || '';
-        const code = part.replace(/```\w+\n|```/g, '');
-        return <CodeBlock key={index} className={`language-${language}`}>{code}</CodeBlock>
-      }
-      return part;
-    });
-  };
+  const renderContent = (content) => (
+    <Box
+      sx={{
+        '& p': { m: 0 },
+        '& p + p': { mt: 1 },
+        '& ul, & ol': { my: 0.5, pl: 2.5 },
+        '& li': { mb: 0.25 },
+      }}
+    >
+      <ReactMarkdown components={{ code: CodeBlock, pre: ({ children }) => children }}>
+        {content}
+      </ReactMarkdown>
+    </Box>
+  );
 
   const avatar = (
     <Avatar
