@@ -23,6 +23,9 @@ export async function POST() {
 
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX);
 
+    // Clear existing vectors first so re-seeding replaces the old content instead of appending to it
+    await pineconeIndex.deleteAll();
+
     for (const chunk of chunks) {
       const vector = await embedText(chunk);
       await pineconeIndex.upsert([{

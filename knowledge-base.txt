@@ -1,6 +1,29 @@
-This is an AI-powered platform that helps aspiring software engineers prepare for technical interviews.
-We offer mock interviews that cover a wide range of topics, including algorithms, data structures, system design, and behavioral questions.
-Our goal is to provide a realistic and effective way for candidates to practice and improve their interview skills.
-Our services are available through our website and mobile app.
-We also provide free resources, such as a blog with interview tips and a community forum where users can connect with each other.
-If you have any questions or need help with our platform, please visit our troubleshooting page or contact our technical support team.
+Interview prep notes for software engineering candidates.
+
+Big-O notation describes how an algorithm's running time or memory grows as the input size n grows. Common classes from fastest to slowest: O(1) constant, O(log n) logarithmic, O(n) linear, O(n log n), O(n^2) quadratic, and O(2^n) exponential. In an interview, state the worst-case time and space complexity and explain the trade-off you are making.
+
+Arrays give O(1) access by index but O(n) insertion or deletion in the middle because elements must shift. Hash maps give average O(1) lookup, insert, and delete, at the cost of extra memory and no inherent ordering. Reach for a hash map when you need fast membership tests, counting, or grouping.
+
+A linked list is a chain of nodes where each node points to the next. To reverse a singly linked list, iterate through it with three pointers (previous, current, next), pointing each node back to the one before it. This runs in O(n) time and O(1) space. Linked lists allow O(1) inserts and deletes at a known position but have no random access.
+
+Stacks are last-in, first-out (LIFO) and are used for undo features, the call stack behind recursion, and matching parentheses. Queues are first-in, first-out (FIFO) and are used for breadth-first search and scheduling.
+
+Binary search finds a target in a sorted array by repeatedly halving the search range, running in O(log n). Watch for off-by-one errors in the midpoint and loop bounds, and make sure the range always shrinks so the loop terminates.
+
+Trees are hierarchical structures. A binary search tree keeps smaller values in the left subtree and larger values in the right, giving O(log n) search when balanced. Inorder traversal of a BST visits nodes in sorted order; preorder and postorder are used to copy or delete a tree.
+
+Graphs model relationships between items. Breadth-first search (BFS) uses a queue and finds the shortest path in an unweighted graph. Depth-first search (DFS) uses recursion or a stack and is used for cycle detection and topological sorting. Dijkstra's algorithm finds shortest paths when edge weights are non-negative.
+
+Recursion solves a problem by breaking it into smaller versions of itself with a base case to stop. Dynamic programming optimizes recursion by storing the results of subproblems, either top-down with memoization or bottom-up with tabulation, so they are not recomputed. Classic examples include Fibonacci numbers, the knapsack problem, and longest common subsequence.
+
+Sorting: merge sort and heap sort run in O(n log n) in all cases, though merge sort needs O(n) extra space while heap sort sorts in place. Quicksort averages O(n log n) but can degrade to O(n^2) with poor pivots. Most built-in sorts are O(n log n); mention stability when the order of equal elements matters.
+
+The two-pointer and sliding-window patterns solve many array and string problems efficiently. Two pointers work well on sorted arrays, such as finding a pair that sums to a target. A sliding window tracks a contiguous range and suits problems like the longest substring without repeating characters.
+
+Strings are arrays of characters, so many string problems reduce to array techniques. Common patterns include checking for palindromes with two pointers, detecting anagrams by counting character frequencies with a hash map, and using a sliding window for substring problems. Strings are immutable in many languages, so building a result in a list or buffer and joining once is usually faster than repeated concatenation.
+
+System design basics: start by clarifying the requirements and expected scale (users, reads versus writes, data size). Sketch the core pieces: clients, a load balancer, application servers, a database, and a cache. Then discuss trade-offs such as SQL versus NoSQL, adding a cache like Redis for hot reads, and sharding or replication to scale.
+
+Behavioral interviews: use the STAR method. Describe the Situation and Task, the specific Action you took, and the measurable Result. Prepare two or three real stories covering a conflict, a failure you learned from, and a time you showed leadership or initiative.
+
+General tips: think out loud so the interviewer can follow your reasoning. Restate the problem and confirm the inputs, outputs, and edge cases. Start with a simple brute-force solution, then improve it. Walk through your code on a small example before saying you are finished, and mention how you would test it.
