@@ -1,6 +1,8 @@
 # AI Interview Prep Assistant
 
-A full-stack chatbot that helps software engineering candidates practice for technical interviews. Built with Next.js and Google Gemini, it uses a retrieval-augmented generation (RAG) pipeline over a Pinecone vector database to ground its answers, and routes harder coding questions to a larger model.
+A full-stack chatbot that helps software engineering candidates practice for technical interviews. Built with Next.js and Google Gemini, it uses a retrieval-augmented generation (RAG) pipeline over a Pinecone vector database to ground its answers.
+
+I built this as a computer science student because I wanted a useful way to practice for my own technical interviews, where I could ask follow-up questions and get real answers instead of a static list of problems.
 
 **Live demo:** https://customer-support-ai-project.vercel.app/
 
@@ -9,7 +11,7 @@ A full-stack chatbot that helps software engineering candidates practice for tec
 ## Features
 - Conversational chat UI with answers that stream in token by token
 - RAG pipeline: a knowledge base is chunked, embedded, and stored in Pinecone, and the closest matches are pulled into each prompt so answers stay grounded
-- A routing step classifies each question and sends coding questions to a larger Gemini model, keeping general chat on a cheaper one
+- Code in answers is shown in syntax-highlighted blocks with a copy button
 - Retry handling for model-overload (503) responses
 
 ## Tech stack
