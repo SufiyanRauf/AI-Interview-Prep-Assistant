@@ -32,9 +32,12 @@ I built this as a computer science student because I wanted a useful way to prac
    PINECONE_INDEX=your_index_name
    NEXT_PUBLIC_API_URL=http://localhost:3000
    ```
-3. Load the knowledge base into Pinecone by sending a POST request to `/api/scrape` once.
-4. Start the dev server:
+3. Start the dev server:
    ```bash
    npm run dev
+   ```
+4. With the server running, load the knowledge base into Pinecone with a one-time POST to `/api/scrape`:
+   ```bash
+   curl -X POST http://localhost:3000/api/scrape
    ```
 5. Open http://localhost:3000 in your browser.
